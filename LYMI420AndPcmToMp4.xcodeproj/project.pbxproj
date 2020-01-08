@@ -1,0 +1,500 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C82A03CD23C5BD07009C8494 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C82A03CC23C5BD07009C8494 /* AppDelegate.m */; };
+		C82A03D023C5BD07009C8494 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C82A03CF23C5BD07009C8494 /* ViewController.m */; };
+		C82A03D323C5BD07009C8494 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C82A03D123C5BD07009C8494 /* Main.storyboard */; };
+		C82A03D523C5BD0A009C8494 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C82A03D423C5BD0A009C8494 /* Assets.xcassets */; };
+		C82A03D823C5BD0A009C8494 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C82A03D623C5BD0A009C8494 /* LaunchScreen.storyboard */; };
+		C82A03DB23C5BD0A009C8494 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C82A03DA23C5BD0A009C8494 /* main.m */; };
+		C82A040723C5BD57009C8494 /* ESCMp4v2RecordTool.mm in Sources */ = {isa = PBXBuildFile; fileRef = C82A03E323C5BD57009C8494 /* ESCMp4v2RecordTool.mm */; };
+		C82A040823C5BD57009C8494 /* libmp4v2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C82A03F923C5BD57009C8494 /* libmp4v2.a */; };
+		C82A040923C5BD57009C8494 /* libfaac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C82A03FF23C5BD57009C8494 /* libfaac.a */; };
+		C82A040A23C5BD57009C8494 /* CMp4Encoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = C82A040023C5BD57009C8494 /* CMp4Encoder.mm */; };
+		C82A040B23C5BD57009C8494 /* ESCAACEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = C82A040123C5BD57009C8494 /* ESCAACEncoder.m */; };
+		C82A040C23C5BD57009C8494 /* RTCDataForSampleBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = C82A040323C5BD57009C8494 /* RTCDataForSampleBuffer.m */; };
+		C82A040D23C5BD57009C8494 /* WCLRecordEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = C82A040523C5BD57009C8494 /* WCLRecordEncoder.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C82A03C823C5BD07009C8494 /* LYMI420AndPcmToMp4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LYMI420AndPcmToMp4.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C82A03CB23C5BD07009C8494 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		C82A03CC23C5BD07009C8494 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		C82A03CE23C5BD07009C8494 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		C82A03CF23C5BD07009C8494 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		C82A03D223C5BD07009C8494 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C82A03D423C5BD0A009C8494 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C82A03D723C5BD0A009C8494 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C82A03D923C5BD0A009C8494 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C82A03DA23C5BD0A009C8494 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C82A03E223C5BD57009C8494 /* CMp4Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMp4Encoder.h; sourceTree = "<group>"; };
+		C82A03E323C5BD57009C8494 /* ESCMp4v2RecordTool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ESCMp4v2RecordTool.mm; sourceTree = "<group>"; };
+		C82A03E523C5BD57009C8494 /* ESCMp4v2RecordTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESCMp4v2RecordTool.h; sourceTree = "<group>"; };
+		C82A03E623C5BD57009C8494 /* ESCAACEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESCAACEncoder.h; sourceTree = "<group>"; };
+		C82A03EA23C5BD57009C8494 /* streaming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = streaming.h; sourceTree = "<group>"; };
+		C82A03EB23C5BD57009C8494 /* chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chapter.h; sourceTree = "<group>"; };
+		C82A03EC23C5BD57009C8494 /* file_prop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file_prop.h; sourceTree = "<group>"; };
+		C82A03ED23C5BD57009C8494 /* general.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = general.h; sourceTree = "<group>"; };
+		C82A03EE23C5BD57009C8494 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
+		C82A03EF23C5BD57009C8494 /* isma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = isma.h; sourceTree = "<group>"; };
+		C82A03F023C5BD57009C8494 /* mp4v2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4v2.h; sourceTree = "<group>"; };
+		C82A03F123C5BD57009C8494 /* track.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = track.h; sourceTree = "<group>"; };
+		C82A03F223C5BD57009C8494 /* project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = project.h; sourceTree = "<group>"; };
+		C82A03F323C5BD57009C8494 /* itmf_tags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itmf_tags.h; sourceTree = "<group>"; };
+		C82A03F423C5BD57009C8494 /* track_prop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = track_prop.h; sourceTree = "<group>"; };
+		C82A03F523C5BD57009C8494 /* sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample.h; sourceTree = "<group>"; };
+		C82A03F623C5BD57009C8494 /* platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platform.h; sourceTree = "<group>"; };
+		C82A03F723C5BD57009C8494 /* itmf_generic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itmf_generic.h; sourceTree = "<group>"; };
+		C82A03F923C5BD57009C8494 /* libmp4v2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmp4v2.a; sourceTree = "<group>"; };
+		C82A03FC23C5BD57009C8494 /* faac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = faac.h; sourceTree = "<group>"; };
+		C82A03FD23C5BD57009C8494 /* faaccfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = faaccfg.h; sourceTree = "<group>"; };
+		C82A03FF23C5BD57009C8494 /* libfaac.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfaac.a; sourceTree = "<group>"; };
+		C82A040023C5BD57009C8494 /* CMp4Encoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CMp4Encoder.mm; sourceTree = "<group>"; };
+		C82A040123C5BD57009C8494 /* ESCAACEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ESCAACEncoder.m; sourceTree = "<group>"; };
+		C82A040323C5BD57009C8494 /* RTCDataForSampleBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTCDataForSampleBuffer.m; sourceTree = "<group>"; };
+		C82A040423C5BD57009C8494 /* WCLRecordEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCLRecordEncoder.h; sourceTree = "<group>"; };
+		C82A040523C5BD57009C8494 /* WCLRecordEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCLRecordEncoder.m; sourceTree = "<group>"; };
+		C82A040623C5BD57009C8494 /* RTCDataForSampleBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataForSampleBuffer.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C82A03C523C5BD07009C8494 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C82A040923C5BD57009C8494 /* libfaac.a in Frameworks */,
+				C82A040823C5BD57009C8494 /* libmp4v2.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C82A03BF23C5BD07009C8494 = {
+			isa = PBXGroup;
+			children = (
+				C82A03CA23C5BD07009C8494 /* LYMI420AndPcmToMp4 */,
+				C82A03C923C5BD07009C8494 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C82A03C923C5BD07009C8494 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03C823C5BD07009C8494 /* LYMI420AndPcmToMp4.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C82A03CA23C5BD07009C8494 /* LYMI420AndPcmToMp4 */ = {
+			isa = PBXGroup;
+			children = (
+				C82A040223C5BD57009C8494 /* ESCAssetWriterToMp4Tool */,
+				C82A03E123C5BD57009C8494 /* ESCMp4v2RecordTool */,
+				C82A03CB23C5BD07009C8494 /* AppDelegate.h */,
+				C82A03CC23C5BD07009C8494 /* AppDelegate.m */,
+				C82A03CE23C5BD07009C8494 /* ViewController.h */,
+				C82A03CF23C5BD07009C8494 /* ViewController.m */,
+				C82A03D123C5BD07009C8494 /* Main.storyboard */,
+				C82A03D423C5BD0A009C8494 /* Assets.xcassets */,
+				C82A03D623C5BD0A009C8494 /* LaunchScreen.storyboard */,
+				C82A03D923C5BD0A009C8494 /* Info.plist */,
+				C82A03DA23C5BD0A009C8494 /* main.m */,
+			);
+			path = LYMI420AndPcmToMp4;
+			sourceTree = "<group>";
+		};
+		C82A03E123C5BD57009C8494 /* ESCMp4v2RecordTool */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03E223C5BD57009C8494 /* CMp4Encoder.h */,
+				C82A03E323C5BD57009C8494 /* ESCMp4v2RecordTool.mm */,
+				C82A03E423C5BD57009C8494 /* Encoder */,
+				C82A03E523C5BD57009C8494 /* ESCMp4v2RecordTool.h */,
+				C82A03E623C5BD57009C8494 /* ESCAACEncoder.h */,
+				C82A03E723C5BD57009C8494 /* mp4v2 */,
+				C82A03FA23C5BD57009C8494 /* faac */,
+				C82A040023C5BD57009C8494 /* CMp4Encoder.mm */,
+				C82A040123C5BD57009C8494 /* ESCAACEncoder.m */,
+			);
+			path = ESCMp4v2RecordTool;
+			sourceTree = "<group>";
+		};
+		C82A03E423C5BD57009C8494 /* Encoder */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Encoder;
+			sourceTree = "<group>";
+		};
+		C82A03E723C5BD57009C8494 /* mp4v2 */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03E823C5BD57009C8494 /* include */,
+				C82A03F823C5BD57009C8494 /* lib */,
+			);
+			path = mp4v2;
+			sourceTree = "<group>";
+		};
+		C82A03E823C5BD57009C8494 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03E923C5BD57009C8494 /* mp4v2 */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		C82A03E923C5BD57009C8494 /* mp4v2 */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03EA23C5BD57009C8494 /* streaming.h */,
+				C82A03EB23C5BD57009C8494 /* chapter.h */,
+				C82A03EC23C5BD57009C8494 /* file_prop.h */,
+				C82A03ED23C5BD57009C8494 /* general.h */,
+				C82A03EE23C5BD57009C8494 /* file.h */,
+				C82A03EF23C5BD57009C8494 /* isma.h */,
+				C82A03F023C5BD57009C8494 /* mp4v2.h */,
+				C82A03F123C5BD57009C8494 /* track.h */,
+				C82A03F223C5BD57009C8494 /* project.h */,
+				C82A03F323C5BD57009C8494 /* itmf_tags.h */,
+				C82A03F423C5BD57009C8494 /* track_prop.h */,
+				C82A03F523C5BD57009C8494 /* sample.h */,
+				C82A03F623C5BD57009C8494 /* platform.h */,
+				C82A03F723C5BD57009C8494 /* itmf_generic.h */,
+			);
+			path = mp4v2;
+			sourceTree = "<group>";
+		};
+		C82A03F823C5BD57009C8494 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03F923C5BD57009C8494 /* libmp4v2.a */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		C82A03FA23C5BD57009C8494 /* faac */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03FB23C5BD57009C8494 /* include */,
+				C82A03FE23C5BD57009C8494 /* lib */,
+			);
+			path = faac;
+			sourceTree = "<group>";
+		};
+		C82A03FB23C5BD57009C8494 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03FC23C5BD57009C8494 /* faac.h */,
+				C82A03FD23C5BD57009C8494 /* faaccfg.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		C82A03FE23C5BD57009C8494 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				C82A03FF23C5BD57009C8494 /* libfaac.a */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		C82A040223C5BD57009C8494 /* ESCAssetWriterToMp4Tool */ = {
+			isa = PBXGroup;
+			children = (
+				C82A040323C5BD57009C8494 /* RTCDataForSampleBuffer.m */,
+				C82A040423C5BD57009C8494 /* WCLRecordEncoder.h */,
+				C82A040523C5BD57009C8494 /* WCLRecordEncoder.m */,
+				C82A040623C5BD57009C8494 /* RTCDataForSampleBuffer.h */,
+			);
+			path = ESCAssetWriterToMp4Tool;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C82A03C723C5BD07009C8494 /* LYMI420AndPcmToMp4 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C82A03DE23C5BD0A009C8494 /* Build configuration list for PBXNativeTarget "LYMI420AndPcmToMp4" */;
+			buildPhases = (
+				C82A03C423C5BD07009C8494 /* Sources */,
+				C82A03C523C5BD07009C8494 /* Frameworks */,
+				C82A03C623C5BD07009C8494 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LYMI420AndPcmToMp4;
+			productName = LYMI420AndPcmToMp4;
+			productReference = C82A03C823C5BD07009C8494 /* LYMI420AndPcmToMp4.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C82A03C023C5BD07009C8494 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1030;
+				ORGANIZATIONNAME = ymluo;
+				TargetAttributes = {
+					C82A03C723C5BD07009C8494 = {
+						CreatedOnToolsVersion = 10.3;
+					};
+				};
+			};
+			buildConfigurationList = C82A03C323C5BD07009C8494 /* Build configuration list for PBXProject "LYMI420AndPcmToMp4" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C82A03BF23C5BD07009C8494;
+			productRefGroup = C82A03C923C5BD07009C8494 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C82A03C723C5BD07009C8494 /* LYMI420AndPcmToMp4 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C82A03C623C5BD07009C8494 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C82A03D823C5BD0A009C8494 /* LaunchScreen.storyboard in Resources */,
+				C82A03D523C5BD0A009C8494 /* Assets.xcassets in Resources */,
+				C82A03D323C5BD07009C8494 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C82A03C423C5BD07009C8494 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C82A03D023C5BD07009C8494 /* ViewController.m in Sources */,
+				C82A03DB23C5BD0A009C8494 /* main.m in Sources */,
+				C82A040D23C5BD57009C8494 /* WCLRecordEncoder.m in Sources */,
+				C82A040C23C5BD57009C8494 /* RTCDataForSampleBuffer.m in Sources */,
+				C82A040B23C5BD57009C8494 /* ESCAACEncoder.m in Sources */,
+				C82A040A23C5BD57009C8494 /* CMp4Encoder.mm in Sources */,
+				C82A040723C5BD57009C8494 /* ESCMp4v2RecordTool.mm in Sources */,
+				C82A03CD23C5BD07009C8494 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		C82A03D123C5BD07009C8494 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C82A03D223C5BD07009C8494 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		C82A03D623C5BD0A009C8494 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C82A03D723C5BD0A009C8494 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C82A03DC23C5BD0A009C8494 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		C82A03DD23C5BD0A009C8494 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C82A03DF23C5BD0A009C8494 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = LYMI420AndPcmToMp4/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/LYMI420AndPcmToMp4/ESCMp4v2RecordTool/mp4v2/lib",
+					"$(PROJECT_DIR)/LYMI420AndPcmToMp4/ESCMp4v2RecordTool/faac/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lym.LYMI420AndPcmToMp4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C82A03E023C5BD0A009C8494 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = LYMI420AndPcmToMp4/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/LYMI420AndPcmToMp4/ESCMp4v2RecordTool/mp4v2/lib",
+					"$(PROJECT_DIR)/LYMI420AndPcmToMp4/ESCMp4v2RecordTool/faac/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lym.LYMI420AndPcmToMp4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C82A03C323C5BD07009C8494 /* Build configuration list for PBXProject "LYMI420AndPcmToMp4" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C82A03DC23C5BD0A009C8494 /* Debug */,
+				C82A03DD23C5BD0A009C8494 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C82A03DE23C5BD0A009C8494 /* Build configuration list for PBXNativeTarget "LYMI420AndPcmToMp4" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C82A03DF23C5BD0A009C8494 /* Debug */,
+				C82A03E023C5BD0A009C8494 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C82A03C023C5BD07009C8494 /* Project object */;
+}
