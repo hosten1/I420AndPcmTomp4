@@ -46,7 +46,7 @@
     }
 }
  */
--(void)appClient:(RTCSDKClientPeer *)client didOutputMixVideoSampleBufferRef:(CMSampleBufferRef)sampleBufferRef width:(CGFloat)width height:(CGFloat)height{
+- (void) didOutputMixVideoSampleBufferRef:(CMSampleBufferRef)sampleBufferRef width:(CGFloat)width height:(CGFloat)height{
     if (_fileWriter) {
         [self.fileWriter encodeFrame:sampleBufferRef isVideo:YES];
     }
