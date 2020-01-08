@@ -1,6 +1,7 @@
 # ESCAssetWriterToMp4Tool
  NV12 stream and pcm stream to mp4 file
-从WebRTC 获取视频流：通过回调接口生成RTCVideoFrame
+
+* 从WebRTC 获取视频流：通过回调接口生成RTCVideoFrame
 
 ```objectivec
 void  PeerConnectionDelegateAdapter::OnMixVideoStreamI420(char* videoFrame, int width, int height, int yuv_size) {
@@ -70,5 +71,5 @@ void  PeerConnectionDelegateAdapter::OnMixVideoStreamI420(char* videoFrame, int 
 }
 ```
 
-然后使用WebRTC的`RTCVideoDecoderH264`文件编码成h264文件：获取编码后的文件利用libmp4v2库生成MP4;
+* 然后使用WebRTC的`RTCVideoDecoderH264`文件编码成h264文件：获取编码后的文件利用libmp4v2库生成MP4;
 
