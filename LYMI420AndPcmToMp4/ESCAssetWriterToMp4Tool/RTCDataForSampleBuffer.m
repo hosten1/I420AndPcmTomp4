@@ -9,6 +9,14 @@
 #import "RTCDataForSampleBuffer.h"
 #import <CoreMedia/CoreMedia.h>
 
+static const int64_t kNumMillisecsPerSec = INT64_C(1000);
+static const int64_t kNumNanosecsPerSec = INT64_C(1000000000);
+
+
+static const int64_t kNumNanosecsPerMillisec =
+kNumNanosecsPerSec / kNumMillisecsPerSec;
+
+
 const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
 
 #ifndef WEAKSELF
@@ -21,9 +29,9 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
 @interface RTCDataForSampleBuffer ()
 
 @property (nonatomic) CMFormatDescriptionRef formatRef ;
-@property (nonatomic, assign) NSUInteger videoDataIndex;  //!<
+@property (nonatomic, assign) long long videoDataIndex;  //!<
 
-@property (nonatomic, assign) NSUInteger audioDataIndex;  //!<
+@property (nonatomic, assign) long long audioDataIndex;  //!<
 
 @property(nonatomic,assign)int audioSampleRate;
 
@@ -34,7 +42,8 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
 @property(nonatomic,strong)NSMutableData* temPCMData;
 
 @property (nonatomic, assign) BOOL isClosed;  //!<
-
+@property (nonatomic, copy) void(^conpletedCB)(int dataLength);  //
+@property (nonatomic, copy) void(^dataCB)(CMSampleBufferRef sampleBufferRef);
 @end
 
 @implementation RTCDataForSampleBuffer
@@ -110,7 +119,7 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
         return nil;
     }
     self.videoDataIndex++;
-
+    
     char *h264Pointer = (char *)data.bytes ;
     NSUInteger h264Length = data.length ;
     
@@ -170,9 +179,9 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
     }
     
     if (nalu_type == 6) {
-//        int otherLocal = [self naluLocal:h264Pointer start:ppsLocal total:h264Length] ;
-//        NSData *data = [NSData dataWithBytes:&h264Pointer[ppsLocal + 4] length:otherLocal - ppsLocal - 4] ;
-//        NSLog(@"data:%@",data);
+        //        int otherLocal = [self naluLocal:h264Pointer start:ppsLocal total:h264Length] ;
+        //        NSData *data = [NSData dataWithBytes:&h264Pointer[ppsLocal + 4] length:otherLocal - ppsLocal - 4] ;
+        //        NSLog(@"data:%@",data);
         
     }
     
@@ -241,12 +250,12 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
             NSLog(@"create sample buffer error");
         }
         CFRelease(format);
-
+        
     }
     if (status == noErr) {
-//        CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, YES) ;
-//        CFMutableDictionaryRef dict = (CFMutableDictionaryRef) CFArrayGetValueAtIndex(attachments, 0) ;
-//        CFDictionarySetValue(dict, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue) ;
+        //        CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, YES) ;
+        //        CFMutableDictionaryRef dict = (CFMutableDictionaryRef) CFArrayGetValueAtIndex(attachments, 0) ;
+        //        CFDictionarySetValue(dict, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue) ;
     }
     CFRelease(blockBuffer) ;
     return sampleBuffer ;
@@ -265,10 +274,11 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
     }
     return -1 ;
 }
--(CMSampleBufferRef)createAudioAACSampleBufferWithPcmdata:(NSData *)audioData audioSampleRate:(int)audioSampleRate audioChannels:(int)audioChannels bitsPerChannel:(int)bitsPerChannel{
-    if (_isClosed) {
-        return NULL;
+-(void)createAudioAACSampleBufferWithPcmdata:(NSData *)audioData audioSampleRate:(int)audioSampleRate audioChannels:(int)audioChannels bitsPerChannel:(int)bitsPerChannel handler:(void (^)(CMSampleBufferRef _Nonnull))handler{
+    if (!handler) {
+        return;
     }
+    self.dataCB = handler;
     if (_audioSampleRate == 0 || _audioSampleRate != audioSampleRate) {
         self.audioChannels = audioChannels;
         self.audioSampleRate = audioSampleRate;
@@ -289,26 +299,105 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
         int pcmLength = (int)temData.length;
         int i = 0;
         
-        int writeLength = 1024 * self.bitsPerChannel * self.audioChannels / 8;
+        int writeLength = (1024 * self.bitsPerChannel * self.audioChannels / 8);
+        //        int writeLength = 1024;
+        //        - 7;//加adts头部信息
         
         while (i + writeLength <= pcmLength && pcmLength >= writeLength) {
-            if (_isClosed) {
-                return NULL;
-            }
+            
             NSData *pcmSubData = [temData subdataWithRange:NSMakeRange(i, writeLength)];
             i += writeLength;
-            return [self __createAudioSampleBufferWithdata:pcmSubData audioSampleRate:audioSampleRate audioChannels:audioChannels bitsPerChannel:bitsPerChannel];
+            handler([self __createAudioSampleBufferWithdata:pcmSubData audioSampleRate:audioSampleRate audioChannels:audioChannels bitsPerChannel:bitsPerChannel]);
         }
         if (i < pcmLength) {
             NSData *pcmSubData = [temData subdataWithRange:NSMakeRange(i, pcmLength - i)];
-            self.temPCMData = [pcmSubData mutableCopy];
+            if (_isClosed) {
+                //结束时，如果数据不够2048个长度，则补充白噪声
+                int subLength = writeLength - (pcmLength - i);
+                int8_t *temData = malloc(subLength);
+                for (int i = 0; i < subLength; i++) {
+                    temData[i] = 0;
+                }
+                NSData *temPcmData = [NSData dataWithBytes:temData length:subLength];
+                NSMutableData *writeData = [NSMutableData dataWithData:pcmSubData];
+                [writeData appendData:temPcmData];
+                handler([self __createAudioSampleBufferWithdata:writeData audioSampleRate:audioSampleRate audioChannels:audioChannels bitsPerChannel:bitsPerChannel]);
+               
+                writeData = nil;
+                temPcmData = nil;
+                [self __relaseData];
+                free(temData);
+                if (_conpletedCB) {
+                    _conpletedCB(subLength);
+                }
+            }else{
+                self.temPCMData = [pcmSubData mutableCopy];
+            }
         }
     }
-   
-    return NULL;
 }
--(void)close{
+-(void)closeWithCompleHandler:(void (^)(int))CompleteHandler{
     self.isClosed = YES;
+    if (CompleteHandler) {
+        self.conpletedCB = CompleteHandler;
+    }else{
+        return;
+    }
+    if (_temPCMData.length > 0) {
+        @autoreleasepool {
+            //首先判断pcmData的长度
+            int pcmLength = (int)_temPCMData.length;
+            int i = 0;
+
+            int writeLength = (1024 * self.bitsPerChannel * self.audioChannels / 8);
+            //        int writeLength = 1024;
+            //        - 7;//加adts头部信息
+
+            while (i + writeLength <= pcmLength && pcmLength >= writeLength) {
+
+                NSData *pcmSubData = [_temPCMData subdataWithRange:NSMakeRange(i, writeLength)];
+                i += writeLength;
+                _dataCB([self __createAudioSampleBufferWithdata:pcmSubData audioSampleRate:_audioSampleRate audioChannels:_audioChannels bitsPerChannel:_bitsPerChannel]);
+            }
+            if (i < pcmLength) {
+                NSData *pcmSubData = [_temPCMData subdataWithRange:NSMakeRange(i, pcmLength - i)];
+                if (_isClosed) {
+                    //结束时，如果数据不够2048个长度，则补充白噪声
+                    int subLength = writeLength - (pcmLength - i);
+                    int8_t *temData = malloc(subLength);
+                    for (int i = 0; i < subLength; i++) {
+                        temData[i] = 0;
+                    }
+                    NSData *temPcmData = [NSData dataWithBytes:temData length:subLength];
+                    NSMutableData *writeData = [NSMutableData dataWithData:pcmSubData];
+                    [writeData appendData:temPcmData];
+                    _dataCB([self __createAudioSampleBufferWithdata:writeData audioSampleRate:_audioSampleRate audioChannels:_audioChannels bitsPerChannel:_bitsPerChannel]);
+                   
+                    writeData = nil;
+                    temPcmData = nil;
+                    [self __relaseData];
+                    free(temData);
+                    if (_conpletedCB) {
+                        _conpletedCB((int)(self.temPCMData.length));
+                    }
+                }else{
+                    if (_conpletedCB) {
+                        _conpletedCB((int)(self.temPCMData.length));
+                    }
+                }
+            }
+        }
+//        if (_conpletedCB) {
+//            _conpletedCB((int)(self.temPCMData.length));
+//        }
+    }else{
+        if (_conpletedCB) {
+            _conpletedCB((int)(self.temPCMData.length));
+        }
+    }
+    
+}
+- (void)__relaseData{
     if (_temPCMData) {
         self.temPCMData = nil;
     }
@@ -316,9 +405,37 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
         CFRelease(_formatRef);
         self.formatRef = NULL;
     }
+    if (_dataCB) {
+        self.dataCB = nil;
+    }
+}
+
+- (NSData*)rtc__adtsDataForPacketLength:(NSUInteger)packetLength {
+    int adtsLength = 7;
+    char *packet = malloc(sizeof(char) * adtsLength);
+    // Variables Recycled by addADTStoPacket
+    int profile = 2;  //AAC LC
+    //39=MediaCodecInfo.CodecProfileLevel.AACObjectELD;
+    int freqIdx = 8;  // 3:48KHz 8:16khz
+    int chanCfg = 1;  //MPEG-4 Audio Channel Configuration. 1 Channel front-center
+    NSUInteger fullLength = adtsLength + packetLength;
+    // fill in ADTS data
+    packet[0] = (char)0xFF; // 11111111     = syncword
+    packet[1] = (char)0xF9; // 1111 1 00 1  = syncword MPEG-2 Layer CRC
+    packet[2] = (char)(((profile-1)<<6) + (freqIdx<<2) +(chanCfg>>2));
+    packet[3] = (char)(((chanCfg&3)<<6) + (fullLength>>11));
+    packet[4] = (char)((fullLength&0x7FF) >> 3);
+    packet[5] = (char)(((fullLength&7)<<5) + 0x1F);
+    packet[6] = (char)0xFC;
+    NSData *data = [NSData dataWithBytesNoCopy:packet length:adtsLength freeWhenDone:YES];
+    //    free(packet);
+    return data;
 }
 -(CMSampleBufferRef)__createAudioSampleBufferWithdata:(NSData *)data audioSampleRate:(int)audioSampleRate audioChannels:(int)audioChannels bitsPerChannel:(int)bitsPerChannel{
-    self.audioDataIndex++;
+    //    NSData *adtsHeader = [self rtc__adtsDataForPacketLength:in_data.length];
+    //    NSMutableData *data = [NSMutableData dataWithData:adtsHeader];
+    //    [data appendData:in_data];
+    //    NSLog(@"=================audio data length:%@",@(data.length));
     OSStatus result;
     
     AudioStreamBasicDescription audioDescription;
@@ -366,15 +483,22 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
     }
     
     int64_t ptst = (_audioDataIndex * (1000.0 / audioSampleRate)) *(TIME_SCALE/1000);
+    //    CMTime presentationTimeStamp = CMTimeMake(frame.timeStampNs / kNumNanosecsPerMillisec, 1000);
     //    DLog(@"pts:%lld",pts);
-    CMTime pts = CMTimeMake(ptst, TIME_SCALE);
+    CMTime pts = CMTimeMake(ptst, 1000);
     
     
+    //    CMSampleTimingInfo timeInfoArray[1] = { {
+    //        .duration = CMTimeMake(1024, audioSampleRate),
+    //        .presentationTimeStamp = pts,
+    //        .decodeTimeStamp = pts,
+    //    } };
     CMSampleTimingInfo timeInfoArray[1] = { {
-        .duration = CMTimeMake(1024, audioSampleRate),
+        .duration = kCMTimeInvalid,
         .presentationTimeStamp = pts,
-        .decodeTimeStamp = pts,
+        .decodeTimeStamp = kCMTimeInvalid,
     } };
+    
     size_t samplesizesarray[1024] = {2};
     for (int i = 0; i < 1024; i++) {
         samplesizesarray[i] = 2;
@@ -397,14 +521,15 @@ const int32_t TIME_SCALE = 1000000000l;    // 1s = 1e10^9 ns
         return NULL;
     }
     if (result == noErr) {
-//        CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, YES) ;
-//        CFMutableDictionaryRef dict = (CFMutableDictionaryRef) CFArrayGetValueAtIndex(attachments, 0) ;
-//        CFDictionarySetValue(dict, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue) ;
+        //        CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, YES) ;
+        //        CFMutableDictionaryRef dict = (CFMutableDictionaryRef) CFArrayGetValueAtIndex(attachments, 0) ;
+        //        CFDictionarySetValue(dict, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue) ;
     }
+    self.audioDataIndex += 1024;
     
     CFRelease(blockBuffer) ;
     CFRelease(cmAudioFormatDescriptionRef);
-//    CFAutorelease(sampleBuffer) ;
+    //    CFAutorelease(sampleBuffer) ;
     // check error
     return sampleBuffer;
 }

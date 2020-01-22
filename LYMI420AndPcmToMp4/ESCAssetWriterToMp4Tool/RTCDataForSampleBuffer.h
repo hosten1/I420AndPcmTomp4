@@ -13,12 +13,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RTCDataForSampleBuffer : NSObject
 
+@property(nonatomic,strong,readonly)NSMutableData* temPCMData;
+
+
+
 -(NSData *)createVideoDataWithVideoSampleBuffer:(CMSampleBufferRef)sample ;
 -(CMSampleBufferRef)createVideoSampleBufferWithdata:(NSData *)data  frameRate:(CGFloat)frameRate;
 
--(CMSampleBufferRef)createAudioAACSampleBufferWithPcmdata:(NSData *)audioData audioSampleRate:(int)audioSampleRate audioChannels:(int)audioChannels bitsPerChannel:(int)bitsPerChannel;
+-(void)createAudioAACSampleBufferWithPcmdata:(NSData *)audioData audioSampleRate:(int)audioSampleRate audioChannels:(int)audioChannels bitsPerChannel:(int)bitsPerChannel handler:(void(^)(CMSampleBufferRef sampleBufferRef))handler;
 
-- (void) close;
+- (void) closeWithCompleHandler:(void(^)(int dataLength))CompleteHandler;
 @end
 
 NS_ASSUME_NONNULL_END

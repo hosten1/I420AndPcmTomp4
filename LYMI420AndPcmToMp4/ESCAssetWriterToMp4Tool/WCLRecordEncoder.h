@@ -44,7 +44,7 @@
  *
  *  @return WCLRecordEncoder的实体
  */
-+ (WCLRecordEncoder*)encoderForPath:(NSString*)path Height:(NSInteger)cy width:(NSInteger)cx channels: (int)ch samples:(Float64)rate;
++ (WCLRecordEncoder*)encoderForPath:(NSString*)path Height:(NSInteger)cy width:(NSInteger)cx channels: (int)ch samples:(Float64)rate VideoFrameRate:(NSInteger)frameRate;
 
 /**
  *  初始化方法
@@ -57,7 +57,7 @@
  *
  *  @return WCLRecordEncoder的实体
  */
-- (instancetype)initPath:(NSString*)path Height:(NSInteger)cy width:(NSInteger)cx channels: (int)ch samples:(Float64)rate;
+- (instancetype)initPath:(NSString*)path Height:(NSInteger)cy width:(NSInteger)cx channels: (int)ch samples:(Float64)rate VideoFrameRate:(NSInteger)frameRate;
 
 /**
  *  完成视频录制时调用
@@ -77,5 +77,5 @@
 - (BOOL)encodeFrame:(CMSampleBufferRef)sampleBuffer isVideo:(BOOL)isVideo;
 - (BOOL)encodeAudioPcmFrame:(NSData*)audioData channels:(const size_t)channels bit_per_sample:(const size_t)bit_per_sample sample_rate:(const size_t)sample_rat;
 
-- (void)encodeFrame:(CVPixelBufferRef) pixelBuffer isVideo:(BOOL)isVideo fps:(int32_t)fps;
+- (void)encodeFrameWithPixelBuff:(CVPixelBufferRef) pixelBuffer isVideo:(BOOL)isVideo fps:(int32_t)fps;
 @end

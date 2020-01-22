@@ -36,10 +36,13 @@
 @property (nonatomic, strong) NSString *path;//写入路径
 @property (nonatomic, assign) NSInteger i;//帧数
 
-@property (nonatomic, assign) BOOL videoAllWriter;//帧数
+@property (nonatomic, assign) BOOL videoAllWriter;//
+@property (nonatomic, assign) BOOL audioAllWriter;//
+
 @property (nonatomic, strong) RTCDataForSampleBuffer *dataForSam;
 @property (nonatomic, strong) NSLock *lock;
-@property (nonatomic, assign) BOOL isClose;  //!<<#注释#>
+@property (nonatomic, assign) BOOL isClose;  //!<
+@property (nonatomic, assign) CMTime currentFrameTime;  //!<
 @end
 
 @implementation WCLRecordEncoder
@@ -53,19 +56,20 @@
 }
 
 //WCLRecordEncoder遍历构造器的
-+ (WCLRecordEncoder*)encoderForPath:(NSString*) path Height:(NSInteger) cy width:(NSInteger) cx channels: (int) ch samples:(Float64) rate {
++ (WCLRecordEncoder*)encoderForPath:(NSString*) path Height:(NSInteger) cy width:(NSInteger) cx channels: (int) ch samples:(Float64) rate VideoFrameRate:(NSInteger)frameRate{
     WCLRecordEncoder* enc = [WCLRecordEncoder alloc];
-    return [enc initPath:path Height:cy width:cx channels:ch samples:rate];
+    return [enc initPath:path Height:cy width:cx channels:ch samples:rate VideoFrameRate:frameRate];
 }
 
 //初始化方法
-- (instancetype)initPath:(NSString*)path Height:(NSInteger)cy width:(NSInteger)cx channels:(int)ch samples:(Float64) rate {
+- (instancetype)initPath:(NSString*)path Height:(NSInteger)cy width:(NSInteger)cx channels:(int)ch samples:(Float64) rate VideoFrameRate:(NSInteger)frameRate{
     self = [super init];
     if (self) {
         self.i = 0;
         self.path = path;
         self.videoAllWriter = NO;
         self.isClose = NO;
+        self.currentFrameTime = kCMTimeZero;
         //先把路径下的文件给删除掉，保证录制的文件是最新的
         [[NSFileManager defaultManager] removeItemAtPath:self.path error:nil];
         NSURL* url = [NSURL fileURLWithPath:self.path];
@@ -77,23 +81,26 @@
             return nil;
         }
         self.asseetWriter = writer;
-        [self initVideoInputHeight:cy width:cx];
+        [self initVideoInputHeight:cy width:cx VideoFrameRate:frameRate];
         //确保采集到rate和ch
         if (rate != 0 && ch != 0) {
             //初始化音频输出
             [self initAudioInputChannels:ch samples:rate];
         }
         //开始写入
-        [self.asseetWriter startWriting];
+        if ([self.asseetWriter startWriting]) {
+            [self.asseetWriter startSessionAtSourceTime:CMTimeMake(0, 1000)];
+        }
+
         self.lock = [[NSLock alloc]init];
     }
     return self;
 }
 
 //初始化视频输入
-- (void)initVideoInputHeight:(NSInteger)height width:(NSInteger)width {
+- (void)initVideoInputHeight:(NSInteger)height width:(NSInteger)width VideoFrameRate:(NSInteger)VideoFrameRate{
     //录制视频的一些配置，分辨率，编码方式等等
-    NSInteger frameRate = 20;
+    NSInteger frameRate = (VideoFrameRate > 0) ? VideoFrameRate : 20;
     //写入视频大小
     NSInteger numPixels = width * height;
     //每像素比特
@@ -118,11 +125,12 @@
 
     //expectsMediaDataInRealTime 必须设为yes，需要从capture session 实时获取数据
     self.videoInput.expectsMediaDataInRealTime = YES;
+
     if ([self.asseetWriter canAddInput:videoInput]) {
         [self.asseetWriter addInput:videoInput];
         self.videoInput = videoInput;
 //        self.videoAssetWriterInput.transform = CGAffineTransformMakeRotation(M_PI / 2.0);
-    }else {
+    } else {
         NSLog(@"can't add video input!");
         return;
     }
@@ -132,14 +140,29 @@
 
 //初始化音频输入
 - (void)initAudioInputChannels:(int)ch samples:(Float64)rate {
+    
     //音频的一些配置包括音频各种这里为AAC,音频通道、采样率和音频的比特率
-    NSDictionary *settings = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [ NSNumber numberWithInt: kAudioFormatMPEG4AAC], AVFormatIDKey,
-                              [ NSNumber numberWithInt: ch], AVNumberOfChannelsKey,
-                              [ NSNumber numberWithFloat: rate], AVSampleRateKey,
-                              nil];
+    // Configure the channel layout as stereo.
+//    AudioChannelLayout stereoChannelLayout = {
+//        .mChannelLayoutTag = kAudioChannelLayoutTag_Stereo,
+//        .mChannelBitmap = 0,
+//        .mNumberChannelDescriptions = 0
+//    };
+//
+    // Convert the channel layout object to an NSData object.
+//    NSData *channelLayoutAsData = [NSData dataWithBytes:&stereoChannelLayout length:offsetof(AudioChannelLayout, mChannelDescriptions)];
+    
+    // Get the compression settings for 128 kbps AAC.
+    NSDictionary *compressionAudioSettings = @{
+                                               AVFormatIDKey         : [NSNumber numberWithUnsignedInt:kAudioFormatMPEG4AAC],
+//                                               AVEncoderBitRateKey   : [NSNumber numberWithInteger:128000],
+                                               AVSampleRateKey       : [NSNumber numberWithInteger:rate],
+//                                               AVChannelLayoutKey    : channelLayoutAsData,
+                                               AVNumberOfChannelsKey : [NSNumber numberWithUnsignedInteger:2],
+//                                               AVEncoderBitRateStrategyKey:AVAudioBitRateStrategy_LongTermAverage,
+                                               };
 //    初始化音频写入类
-    self.audioInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:settings];
+    self.audioInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:compressionAudioSettings];
     //表明输入是否应该调整其处理为实时数据源的数据
     _audioInput.expectsMediaDataInRealTime = YES;
     //将音频输入源加入
@@ -156,37 +179,46 @@
 
 //完成视频录制时调用
 - (void)finishWithCompletionHandler:(void (^)(void))handler {
-     [_lock lock];
-    if (_isClose) {
-        return;
-    }
-    [_dataForSam close];
-    self.isClose = YES;
-    [_lock unlock];
-    if (_asseetWriter.status == AVAssetWriterStatusWriting) {
-        CMTime frameTime = CMTimeMake(_i, 1);
-        [_asseetWriter endSessionAtSourceTime:frameTime];
-    }
-  
-    //Finish the session:
-    if (_videoInput) {
-        [_videoInput markAsFinished];
-    }
-    if (_audioInput) {
-        [_audioInput markAsFinished];
-    }
-    if (_asseetWriter.status != AVAssetWriterStatusCompleted) {
-        [_asseetWriter finishWritingWithCompletionHandler: handler];
-    }
+    __weak typeof(self) weakSelf = self;
+    [_dataForSam closeWithCompleHandler:^(int dataLength) {
+        __strong typeof(weakSelf) stongSelf = weakSelf;
+        NSLog(@"=============dataLength:%@===============",@(dataLength));
+        [stongSelf.lock lock];
+        if (stongSelf.isClose) {
+            return;
+        }
+        
+        stongSelf.isClose = YES;
+        [stongSelf.lock unlock];
+        if (stongSelf.asseetWriter.status == AVAssetWriterStatusWriting) {
+            //        CMTime frameTime = _frameTime;
+            //        CMTimeMake(_i, 1);
+            [stongSelf.asseetWriter endSessionAtSourceTime:stongSelf.currentFrameTime];
+        }
+        
+        //Finish the session:
+        if (stongSelf.videoInput) {
+            [stongSelf.videoInput markAsFinished];
+        }
+        if (stongSelf.audioInput) {
+            [stongSelf.audioInput markAsFinished];
+        }
+        if (stongSelf.asseetWriter.status != AVAssetWriterStatusCompleted) {
+            [stongSelf.asseetWriter finishWritingWithCompletionHandler: handler];
+        }
+    }];//告诉已经停止录制，开始处理缓存数据
+    
+    
    
 }
-- (void)encodeFrame:(CVPixelBufferRef) pixelBuffer isVideo:(BOOL)isVideo fps:(int32_t)fps {
+
+- (void)encodeFrameWithPixelBuff:(CVPixelBufferRef) pixelBuffer isVideo:(BOOL)isVideo fps:(int32_t)fps {
     CMTime presentTime = CMTimeMake(0, fps);
-    if (_asseetWriter.status == AVAssetWriterStatusUnknown && isVideo) {
-        //开始写入
-        [_asseetWriter startWriting];
-        [_asseetWriter startSessionAtSourceTime:kCMTimeZero];
-    }
+//    if (_asseetWriter.status == AVAssetWriterStatusUnknown && isVideo) {
+//        //开始写入
+//        [_asseetWriter startWriting];
+//        [_asseetWriter startSessionAtSourceTime:kCMTimeZero];
+//    }
     if(_adaptor.assetWriterInput.readyForMoreMediaData){
         presentTime = CMTimeMake(_i, fps);
         if (pixelBuffer) {
@@ -206,7 +238,12 @@
             NSLog (@"Done");
         }
     }
+    if (!_videoAllWriter) {
+        self.videoAllWriter = YES;
+        //         [self.asseetWriter startSessionAtSourceTime:timestamp];
+    }
 }
+
 -(BOOL)appendToAdapter:(AVAssetWriterInputPixelBufferAdaptor*)adaptor
            pixelBuffer:(CVPixelBufferRef)buffer
                 atTime:(CMTime)presentTime
@@ -218,22 +255,26 @@
     return [adaptor appendPixelBuffer:buffer withPresentationTime:presentTime];
 }
 -(BOOL)encodeAudioPcmFrame:(NSData *)pcmData channels:(const size_t)channels bit_per_sample:(const size_t)bit_per_sample sample_rate:(const size_t)sample_rat{
-    [_lock lock];
-    if (_isClose) {
-        [_lock unlock];
-        return NO;
-    }
-    [_lock unlock];
-    CMSampleBufferRef sampleBuffer =  [self.dataForSam createAudioAACSampleBufferWithPcmdata:pcmData audioSampleRate:(int)sample_rat audioChannels:(int)channels bitsPerChannel:16];
-    if (sampleBuffer) {
-        NSLog(@"=====================didReciveMixAudioStreamPcm(sample_rat:%@ )===========================",@(sample_rat));
-        [self encodeFrame:sampleBuffer isVideo:NO];
-        CFRelease(sampleBuffer);
-//         return true;
-    }else{
-//        NSLog(@"-========================err");
-//         return false;
-    }
+//    [_lock lock];
+//    if (_isClose) {
+//        [_lock unlock];
+//        return NO;
+//    }
+//    [_lock unlock];
+//    CMSampleBufferRef sampleBuffer =  [self.dataForSam createAudioAACSampleBufferWithPcmdata:pcmData audioSampleRate:(int)sample_rat audioChannels:(int)channels bitsPerChannel:16];
+    __weak typeof(self) weakSelf = self;
+    [self.dataForSam createAudioAACSampleBufferWithPcmdata:pcmData audioSampleRate:(int)sample_rat audioChannels:(int)channels bitsPerChannel:16 handler:^(CMSampleBufferRef  _Nonnull sampleBufferRef) {
+        if (weakSelf && sampleBufferRef) {
+//                    NSLog(@"=====================didReciveMixAudioStreamPcm(sample_rat:%@ )===========================",@(sample_rat));
+            [weakSelf encodeFrame:sampleBufferRef isVideo:NO];
+            CFRelease(sampleBufferRef);
+            //         return true;
+        }else{
+                    NSLog(@"-======================== err");
+            //         return false;
+        }
+    }];
+   
     return NO;
 }
 //通过这个方法写入数据
@@ -265,18 +306,36 @@
     if (!_videoAllWriter) {
         return;
     }
-//    [self.asseetWriter startSessionAtSourceTime:CMSampleBufferGetPresentationTimeStamp(sampleBufferRef)];
+    CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBufferRef);
+    CMTime duration   = CMSampleBufferGetDuration(sampleBufferRef);
+    if (duration.value > 0) {
+        timestamp = CMTimeAdd(timestamp, duration);
+    }
+    if (!_audioAllWriter) {
+//        [self.asseetWriter startSessionAtSourceTime:timestamp];
+        self.audioAllWriter = YES;
+    }
     if (self.audioInput.readyForMoreMediaData) {
         [self.audioInput appendSampleBuffer:sampleBufferRef];
     }
+   
+   
 }
 
 - (void)addVideoFrame:(CMSampleBufferRef)sampleBufferRef {
-    [self.asseetWriter startSessionAtSourceTime:CMSampleBufferGetPresentationTimeStamp(sampleBufferRef)];
+    CMTime timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBufferRef);
+    CMTime duration   = CMSampleBufferGetDuration(sampleBufferRef);
+    if (duration.value > 0) {
+        timestamp = CMTimeAdd(timestamp, duration);
+    }
+    if (!_videoAllWriter) {
+        self.videoAllWriter = YES;
+//         [self.asseetWriter startSessionAtSourceTime:timestamp];
+    }
     if (self.videoInput.readyForMoreMediaData) {
         [self.videoInput appendSampleBuffer:sampleBufferRef];
     }
-    self.videoAllWriter = YES;
+    self.currentFrameTime = timestamp;
 }
 
 @end
